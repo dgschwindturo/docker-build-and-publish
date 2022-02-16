@@ -7,10 +7,26 @@ inputs:
   dockerhub-repo-name:
     description: 'The docker hub repository name, within the identified docker hub organization, to accept published image'
     required: true
+  dockerhub-username:
+    description: 'Username credentials to login to docker hub'
+    required: true
+  dockerhub-token:
+    description: 'docker hub Access Token credential'
+    required: true
 runs:
   using: "composite"
   steps:
-    - run: echo "Targeted DockerHub org '${{ inputs.dockerhub-org-name }}'"
-      shell: bash
-    - run: echo "Targeted DockerHub repo '${{ inputs.dockerhub-repo-name }}'"
-      shell: bash
+    - name: Docker extract version metadata
+      id: extractSemanticVersion
+      uses: docker/metadata-action@v3
+      with:
+        images: ${{inputs.dockerhub-org-name}}/${{inputs.dockerhub-repo-name}}
+        tags: |
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}.{{minor}}.{{patch}}
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{inputs.dockerhub-username}}
+        password: ${{inputs.dockerhub-token}}
+
