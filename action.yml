@@ -1,0 +1,16 @@
+name: 'docker-build-and-publish'
+description: 'Builds an arbitrary docker image and publishes it to docker hub'
+inputs:
+  dockerhub-org-name:
+    description: 'The docker hub organization name to accept published image'
+    required: true
+  dockerhub-repo-name:
+    description: 'The docker hub repository name, within the identified docker hub organization, to accept published image'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Targeted DockerHub org '${{ inputs.dockerhub-org-name }}'"
+      shell: bash
+    - run: echo "Targeted DockerHub repo '${{ inputs.dockerhub-repo-name }}'"
+      shell: bash
